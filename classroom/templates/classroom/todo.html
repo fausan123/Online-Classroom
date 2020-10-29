@@ -1,0 +1,24 @@
+{% extends "classroom/layout.html" %}
+
+
+{% block body %}
+<h2>Assignments TODO:</h2>
+
+{% for assign in assignments %}
+<div class="assign" data-assignid="{{ assign.id }}">
+    <p class="text-muted float-right">Created on {{ assign.date }}</p>
+    <h4>{{  assign.name }}</h4>
+    <h6><strong>{{ assign.subject }}</strong></h6>
+    <p class="text-muted">{{ assign.user }}</p>
+    <hr>
+    <p class="assigncontent">{{ assign.content }}</p>
+    <hr>
+    {% if assign.due_date %}
+    <p><strong>Due date: {{ assign.due_date }}</strong></p>
+    {% else %}
+    <p><strong>No Due Date</strong></p>
+    {% endif %}
+</div>
+{% endfor %}
+
+{% endblock %}

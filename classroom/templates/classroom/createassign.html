@@ -1,0 +1,13 @@
+{% extends "classroom/layout.html" %}
+{% load crispy_forms_tags %}
+
+
+{% block body %}
+<h2>Create Assignment</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <p class="form-text text-muted">Format: mm/dd/yyyy hh:mm:ss</p>
+    <input type="submit" value="Create" class="btn btn-primary">
+</form>
+{% endblock %}

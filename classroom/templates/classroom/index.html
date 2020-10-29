@@ -1,0 +1,78 @@
+{% extends "classroom/layout.html" %}
+
+{% block body %}
+
+{% if user.account_type == 'Faculty' %}
+
+<button class="btn btn-info float-right sub-btn">Create Subject</button>
+<div class="sub-modal" id="sub_modal">
+    <div class="submodal-content">
+        <span class="close" id="createclose">&times;</span>
+        <h4>Create Subject :</h4>
+        <form action="{% url 'index' %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <input type="text" placeholder="Name" name="name" class="form-control">
+            </div>
+            <div class="form-group">
+                <textarea placeholder="Info" name="info" class="form-control"></textarea>
+            </div>
+            <input type="submit" value="Create" class="btn btn-success">
+        </form>
+    </div>
+</div>
+
+<button class="btn btn-info float-right mr-2" id="course_btn">Join Course</button>
+<div class="sub-modal" id="course_modal">
+    <div class="submodal-content">
+        <span class="close" id="joinclose">&times;</span>
+        <h4>Join Course as Faculty :</h4>
+        <form action="{% url 'index' %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <input type="text" placeholder="Course Code" name="code" class="form-control">
+                <p class="form-text text-muted">6-digit code unique to each course</p>
+            </div>
+            <input type="submit" value="Join" class="btn btn-success">
+        </form>
+    </div>
+</div>
+
+{% else %}
+
+<button class="btn btn-info float-right" id="course_btn">Join Course</button>
+<div class="sub-modal" id="course_modal">
+    <div class="submodal-content">
+        <span class="close" id="joinclose">&times;</span>
+        <h4>Join Course as Student :</h4>
+        <form action="{% url 'index' %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <input type="text" placeholder="Course Code" name="code" class="form-control">
+                <p class="form-text text-muted">6-digit code unique to each course</p>
+            </div>
+            <input type="submit" value="Join" class="btn btn-success">
+        </form>
+    </div>
+</div>
+
+{% endif %}
+
+<h3>All Subjects:</h3>
+
+<div class="sub-layout">
+    {% for subject in subjects %}
+    <div class="subs" data-subid="{{ subject.id }}">
+        <p class="float-right">Code: {{ subject.code }}</p>
+        <h4>{{ subject.name }}</h4>
+        <p>Created on {{ subject.date_created }}</p>
+        {% if subject.info %}
+        <hr>
+        <p>Info: {{ subject.info }}</p>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+
+{% endblock %}

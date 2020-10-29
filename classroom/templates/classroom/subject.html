@@ -1,0 +1,185 @@
+{% extends "classroom/layout.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block script %}
+<script src="{% static 'classroom/subject.js' %}"></script>
+{% endblock %}
+
+{% block body %}
+<div class="sub-content">
+
+    {% if user.account_type == 'Faculty' %}
+    <div class="att">
+        <a class="btn btn-warning float-right" id="course_btn">Take Attendance</a>
+        <div class="sub-modal" id="course_modal">
+            <div class="submodal-content">
+                <span class="close" id="joinclose">&times;</span>
+                <h4>Take Today's Attendance :</h4>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ att_form|crispy }}
+                    <p class="text-muted">Format: mm/dd/yyyy hh:mm:ss</p>
+                    <input type="submit" value="Conduct" class="btn btn-success">
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <h2>{{ subject.name }}</h2>
+    {% if subject.info %}
+    <p class="text-muted">Info: {{ subject.info }} <br> Code: {{ subject.code }}</p>
+    {% endif %}
+    <hr>
+
+    <h3>Faculties <button class="displaybtn" id="facbtn"><img src="/media/expandmore.svg"></button></h3>
+    <div class="faculties" style="display: none;">
+        {% for faculty in subject.faculties.all %}
+        <div class="fac-info mt-2">
+            <p>{{ faculty.firstname }} {{ faculty.lastname }} &nbsp &nbsp <span
+                    class="text-muted">{{ faculty.email }}</span></p>
+        </div>
+        {% endfor %}
+    </div>
+    <hr>
+
+    <h3>Students <button class="displaybtn" id="stdbtn"><img src="/media/expandmore.svg"></button></h3>
+    <div class="students" style="display: none;">
+        {% for student in subject.students.all %}
+        <div class="fac-info mt-2">
+            <p>{{ student.firstname }} {{ student.lastname }} &nbsp &nbsp <span
+                    class="text-muted">{{ student.email }}</span></p>
+        </div>
+        {% endfor %}
+    </div>
+    <hr>
+
+    <h3>Attendances :</h3>
+    {% for attendance in attendances %}
+    <div class="atts">
+        <h4>Attendance on {{ attendance.date|date:"F d, Y" }}</h4>
+        <hr>
+        {% if user.account_type == 'Student' %}
+
+        {% if user not in attendance.students.all %}
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="attid" value="{{ attendance.id }}">
+            <input type="submit" class="btn btn-primary" name="present" value="Mark Your Attendance">
+        </form>
+        {% else %}
+        <p><strong>You are marked as present ({{ attendance.students.all|length }} present)</strong></p>
+        {% endif %}
+
+        {% else %}
+        <p><strong>{{ attendance.students.all|length }} students are present</strong></p>
+        <div class="students" style="display: block;">
+            {% for student in attendance.students.all %}
+            <div class="fac-info mt-2">
+                <p style="margin-bottom: 0;">{{ student.firstname }} {{ student.lastname }}</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% endif %}
+
+        <p style="font-size: 16px; margin: 5px 0 0 0;"><strong>Last Date/Time to Mark:
+                {{ attendance.closing_time }}</strong></p>
+    </div>
+    {% endfor %}
+    {% if attendances|length == 0  %}
+    <p>Nothing here yet...</p>
+    {% endif %}
+
+    <hr>
+
+    <h3>Posts :</h3>
+    {% if user.is_authenticated %}
+    <form method="post" id="postform">
+        {% csrf_token %}
+        {{ p_form|crispy }}
+        <input type="submit" class="btn btn-primary" value="Post">
+    </form>
+    {% endif %}
+    {% for post in post_pageobj %}
+    <div class="post">
+        <p class="float-right">Posted on {{ post.date }}</p>
+        <p class="text-muted">{{ post.user }}</p>
+        <hr>
+        <p class="postcontent">{{ post.content }}</p>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <input type="hidden" id="userName" value="{{ user.username }}">
+                <input type="text" placeholder="Enter your comment.." class="form-control float-left" name="comment"
+                    id="{{ post.id }}postcominput">
+                <input type="submit" value="Comment" class="btn btn-primary float-right"
+                    id="{{ post.id }}postcomsubmit">
+            </div>
+        </form>
+        <p class="postcomlink" id="{{ post.id }}postcomlink">Click here to view all comments</p>
+        <div class="postcomments" id="{{ post.id }}postcomments" style="display: none;">
+            {% for comment in post.comments.all %}
+            <div class="post">
+                <strong>{{ comment.user }} :</strong> {{ comment.content }}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+
+    {% if post_ispage %}
+    <div class="p-2">
+        {% if post_pageobj.has_previous %}
+        <a class="btn btn-outline-primary mb-4" href="?page1={{ post_pageobj.previous_page_number }}">Previous</a>
+        {% endif %}
+
+        <a class="btn btn-primary mb-4" href="?page1={{ post_pageobj.number }}">{{ post_pageobj.number }}</a>
+
+        {% if post_pageobj.has_next %}
+        <a class="btn btn-outline-primary mb-4" href="?page1={{ post_pageobj.next_page_number }}">Next</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <hr>
+
+    <h3>Assignments :</h3>
+
+    {% if user.account_type == 'Faculty' %}
+    <a class="btn btn-primary" href="{% url 'createassign' subject.id %}">Create Assignment</a>
+    {% endif %}
+
+    {% for assign in assign_pageobj %}
+    <div class="assign" data-assignid="{{ assign.id }}">
+        <p class="text-muted float-right">Created on {{ assign.date }}</p>
+        <h4>{{  assign.name }}</h4>
+        <p class="text-muted">{{ assign.user }}</p>
+        <hr>
+        <p class="assigncontent">{{ assign.content }}</p>
+        <hr>
+        {% if assign.due_date %}
+        <p><strong>Due date: {{ assign.due_date }}</strong></p>
+        {% else %}
+        <p><strong>No Due Date</strong></p>
+        {% endif %}
+    </div>
+    {% endfor %}
+
+    {% if assign_ispage %}
+    <div class="p-2">
+        {% if assign_pageobj.has_previous %}
+        <a class="btn btn-outline-primary mb-4" href="?page2={{ assign_pageobj.previous_page_number }}">Previous</a>
+        {% endif %}
+
+        <a class="btn btn-primary mb-4" href="?page2={{ assign_pageobj.number }}">{{ assign_pageobj.number }}</a>
+
+        {% if assign_pageobj.has_next %}
+        <a class="btn btn-outline-primary mb-4" href="?page2={{ assign_pageobj.next_page_number }}">Next</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

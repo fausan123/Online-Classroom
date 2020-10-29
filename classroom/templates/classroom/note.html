@@ -1,0 +1,46 @@
+{% extends "classroom/layout.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block script %}
+<script src="{% static 'classroom/note.js' %}"></script>
+{% endblock %}
+
+{% block body %}
+<div class="notes">
+    <h2>Notes:</h2>
+    <form method="post">
+        {% csrf_token %}
+        <legend>Add Note:</legend>
+        {{ form|crispy }}
+        <input type="submit" value="Add" class="btn btn-primary">
+    </form>
+    {% for note in notes %}
+
+    {% if note.starred %}
+    <div class="note" id="{{ note.id }}notediv" style="background-color: rgb(253, 253, 135);">
+        <p class="float-right">{{ note.date }}</p>
+        <h4>{{ note.title }}</h4>
+        <hr>
+        <p>{{ note.content }}</p>
+        <input type="submit" class="btn btn-danger" id="{{ note.id }}notestarbtn" value="Unstar">
+        <input type="submit" class="btn btn-danger" id="{{ note.id }}notedeletebtn" value="Delete">
+    </div>
+    {% else %}
+    <div class="note" id="{{ note.id }}notediv" style="background-color: #fff;">
+        <p class="float-right">{{ note.date }}</p>
+        <h4>{{ note.title }}</h4>
+        <hr>
+        <p>{{ note.content }}</p>
+        <input type="submit" class="btn btn-warning" id="{{ note.id }}notestarbtn" value="Star">
+        <input type="submit" class="btn btn-danger" id="{{ note.id }}notedeletebtn" value="Delete">
+    </div>
+    {% endif %}
+
+    {% endfor %}
+
+    {% if notes|length == 0  %}
+    <p class="mt-5" style="font-size: 17px;">Nothing here yet...</p>
+    {% endif %}
+</div>
+{% endblock %}

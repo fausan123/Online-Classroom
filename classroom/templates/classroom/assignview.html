@@ -1,0 +1,56 @@
+{% extends "classroom/layout.html" %}
+{% load crispy_forms_tags %}
+
+{% block body %}
+<div class="assignview">
+    {% if assignment.due_date %}
+    <p class="float-right">Due: {{ assignment.due_date }}</p>
+    {% else %}
+    <p class="float-right">No due date</p>
+    {% endif %}
+    <h2>{{ assignment.name }}</h2>
+
+    {% if user.account_type == "Student" %}
+
+    {% if user in assignment.submitted_students.all %}
+    <p class="float-right" style="color: green;"><strong>Submitted</strong></p>
+    {% else %}
+    <p class="float-right" style="color: red;"><strong>Not Submitted</strong></p>
+    {% endif %}
+
+    {% endif %}
+
+    <p class="text-muted">Created on {{ assignment.date }}</p>
+    <hr>
+    <p class="assignview-content">{{ assignment.content }}</p>
+    <hr>
+
+    {% if user.account_type == "Student" %}
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <legend>Submit :</legend>
+        {{ form|crispy }}
+        <input type="submit" value="Hand In" class="btn btn-primary">
+    </form>
+    {% else %}
+    <h3>Submissions:</h3>
+
+    {% for submission in assignment.submissions.all %}
+    <div class="submissions mt-3">
+        <p class="text-muted float-right">Submitted on: {{ submission.date }}</p>
+        <h5>{{ submission.user }}</h5>
+        <hr>
+        <p>File: <a href="{{ submission.files.url }}" target="_blank">Download</a></p>
+
+        {% if submission.date > assignment.due_date %}
+        <p style="color:red;"><strong>Timing : Late</strong></p>
+        {% else %}
+        <p style="color:green;"><strong>Timing : Ontime</strong></p>
+        {% endif %}
+
+    </div>
+    {% endfor %}
+
+    {% endif %}
+</div>
+{% endblock %}

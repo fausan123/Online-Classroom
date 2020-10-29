@@ -1,0 +1,61 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+        integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="{% static 'classroom/styles.css' %}" rel="stylesheet">
+    <title>Classroom</title>
+    <script src="{% static 'classroom/script.js' %}"></script>
+    {% block script %}
+    {% endblock %}
+</head>
+
+<body>
+    <header>
+        <div class="contain">
+
+            <h2 class="header-name">Classroom</h2>
+
+            <a href="javascript:void(0);" class="icon" onclick="resNavbar()">
+                <i class="fa fa-bars"></i>
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="{% url 'index' %}">Home</a></li>
+                    {% if not user.is_authenticated %}
+                    <li><a href="{% url 'register' %}">Register</a></li>
+                    <li><a href="{% url 'login' %}">Login</a></li>
+                    {% else %}
+
+                    {% if user.account_type == 'Student' %}
+                    <li><a href="{% url 'todo' %}">To Do</a></li>
+                    {% endif %}
+                    <li><a href="{% url 'note' %}">Notes</a></li>
+                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                    <li><strong>{{ user.username }}</strong></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <div class="main">
+
+        {% if message %}
+        <div class="alert alert-{{ message.tag }}">
+            {{ message.body }}
+        </div>
+        {% endif %}
+
+        {% block body %}
+        {% endblock %}
+    </div>
+</body>
+
+</html>
