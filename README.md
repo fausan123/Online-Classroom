@@ -6,7 +6,7 @@ To watch a video showcasing the features of this website, click [here](https://y
 * 2 types of accounts - Faculty and Student
 * Faculties can create and join courses, Students can join courses ( using a 6-digit code )
 * Faculties can create assignments and set a due date
-* Users can create posts for a particular subjects
+* Users can create posts for a particular subject
 * Comments on posts
 * Faculties can schedule attendance for a particular day
 * Users can create notes and mark them as important
