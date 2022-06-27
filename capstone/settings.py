@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -104,6 +105,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Dropbox
+DEFAULT_FILE_STORAGE = 'storages.backends.dropbox.DropBoxStorage'
+DROPBOX_OAUTH2_TOKEN = config('DROPBOX_OAUTH2_TOKEN')
+DROPBOX_ROOT_PATH = 'capstone'
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
