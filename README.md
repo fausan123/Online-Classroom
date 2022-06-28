@@ -1,5 +1,6 @@
 # Online Classroom
 
+Hosted on Heroku: https://capstoneclassroom.herokuapp.com/  
 To watch a video showcasing the features of this website, click [here](https://youtu.be/ZoIO-Ewe1AM)
 
 ## Features
@@ -13,4 +14,6 @@ To watch a video showcasing the features of this website, click [here](https://y
 * Mobile responsive
 
 ## NOTE
-An email is send to all students when an assignment is created. So please create an environment variable `EMAIL_USER` for email and `EMAIL_PASS` for email password. If gmail, go to security and enable security for less secure apps. Also change "EMAIL_HOST", "EMAIL_PORT", "EMAIL_USE_TLS" and "EMAIL_USE_SSL" in settings.py if your account is not gmail. For more info check the setting.py file in capstone folder.
+An email is send to all students when an assignment is created. So please create an environment variable `EMAIL_USER` for email and `EMAIL_PASS` for email password.
+Also please change the variables given in capstone/manage.py based on the email service you use  
+Add an environment variable for SECRET_KEY and DROPBOX_OAUTH2_TOKEN
